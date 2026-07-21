@@ -13,3 +13,8 @@ coverage
 .env
 .env.*
 !.env.example
+
+# Local environment files
+.env
+.env.*
+!.env.example
