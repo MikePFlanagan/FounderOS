@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AgentRole {
+  FOUNDER
+  ENGINEERING
+  MARKETING
+  SALES
+  SUPPORT
+  FINANCE
+}
+
+enum TaskStatus {
+  BACKLOG
+  PLANNED
+  RUNNING
+  NEEDS_APPROVAL
+  COMPLETED
+  FAILED
+}
+
+model Workspace {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  agents    Agent[]
+  tasks     Task[]
+  memories  Memory[]
+}
+
+model Agent {
+  id          String    @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  role        AgentRole
+  systemPrompt String   @db.Text
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  tasks       Task[]
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  workspaceId String
+  workspace   Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  agentId     String?
+  agent       Agent?     @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  title       String
+  description String     @db.Text
+  status      TaskStatus @default(BACKLOG)
+  requiresApproval Boolean @default(true)
+  result      Json?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Memory {
+  id          String    @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  namespace   String
+  content     String    @db.Text
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  @@index([workspaceId, namespace])
+}

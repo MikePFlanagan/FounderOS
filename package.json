@@ -1,0 +1,12 @@
+{
+  "name": "founderos",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.34.5",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint"
+  },
+  "devDependencies": {"turbo": "^2.5.0"}
+}
